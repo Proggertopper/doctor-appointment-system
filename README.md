@@ -1,87 +1,139 @@
-# GastroCare Doctor Appointment System
+# GastroCare — Doctor Appointment Booking System
 
-GastroCare is a Spring Boot appointment booking system for a doctor who accepts online and offline consultations. Patients can choose a date, appointment type and free time slot, verify their phone number with an SMS code, and cancel an appointment by token. The doctor has a protected dashboard for managing appointments and schedule slots.
+> A production-style Spring Boot application for managing online and in-clinic doctor appointments. It provides a public patient booking flow, SMS phone verification, secure self-service cancellation, real-time availability updates, and a protected doctor workspace.
 
-## Features
+## Why this project
 
-- Public landing page for a gastroenterologist
-- Online and offline appointment booking
-- PostgreSQL persistence with Flyway migrations
-- SMS verification flow through TurboSMS integration
-- Appointment cancellation by secure token link
-- Doctor dashboard with protected access
-- Appointment filters by date, type, status and patient search
-- Schedule slot creation and deletion
-- Real-time slot updates through WebSocket/STOMP
-- Unified JSON error responses for API failures
+GastroCare models the parts of an appointment system where correctness matters: preventing double bookings, verifying a patient's phone before confirmation, restricting each phone number to one active appointment, and keeping the schedule up to date for all connected clients.
 
-## Tech Stack
+## Key features
 
-- Java 21
-- Spring Boot 3.5
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- PostgreSQL
-- Flyway
-- WebSocket/STOMP
-- Maven
-- Docker Compose
-- OpenAPI/Swagger UI
+- **Public booking flow** for `ONLINE` and `OFFLINE` consultations; patients do not need an account.
+- **SMS one-time-password verification** through TurboSMS, with a safe local mock mode.
+- **Race-safe booking:** an atomic database update changes a slot from `FREE` to `BOOKED`; a competing request receives a clear “slot already taken” response.
+- **One active booking per patient phone:** phone numbers are normalized and protected by both application logic and a partial database unique index.
+- **Secure cancellation links:** a patient can cancel their own active appointment using an unguessable token sent in the confirmation message.
+- **Protected doctor dashboard** for schedule creation, appointment review, cancellation, completion, and no-show handling.
+- **Real-time schedule updates** through WebSocket/STOMP and SockJS.
+- **Database-first evolution** with versioned Flyway migrations.
+- **Validation and abuse controls:** request validation, Ukrainian phone validation, OTP expiry, SMS resend limits, BCrypt password verification, database-backed admin sessions, and login-attempt throttling by IP.
+- **OpenAPI documentation** and automated unit/integration tests.
 
-## Main Pages
+## Architecture
 
-- `/` - public landing page
-- `/booking.html` - patient booking page
-- `/cancel.html?token=...` - appointment cancellation page
-- `/admin-login.html` - doctor login
-- `/doctor.html` - doctor dashboard
-
-## Demo Login
-
-Default local doctor password:
-
-```text
-12345
+```mermaid
+flowchart TB
+    Patient[Patient browser] --> Booking[Booking API]
+    Doctor[Doctor dashboard] --> Admin[Protected admin API]
+    Booking --> Service[Appointment service]
+    Admin --> Service
+    Service --> PostgreSQL[(PostgreSQL)]
+    Service --> SMS[TurboSMS]
+    Service --> Updates[WebSocket topic]
+    Updates --> Patient
+    Updates --> Doctor
 ```
 
-For real deployment, replace `DOCTOR_ADMIN_PASSWORD_HASH` with a new BCrypt hash.
+## Booking flow
 
-## Run With Docker Compose
+1. The patient selects a date, appointment type, and a free slot.
+2. The client requests a six-digit verification code for a Ukrainian phone number.
+3. The patient submits their details and the OTP to confirm the selected slot.
+4. The backend validates the phone, code expiry, and the “one active appointment per phone” rule.
+5. A guarded `FREE → BOOKED` database update makes the first confirmation win and prevents double booking.
+6. The application creates the appointment, sends an SMS confirmation with a cancellation URL, and broadcasts the schedule update through `/topic/slots`.
 
-Copy the example env file:
+## Tech stack
+
+| Area | Technologies |
+| --- | --- |
+| Language & framework | Java 21, Spring Boot 3.5.14 |
+| Web & API | Spring MVC, Jakarta Validation, REST, Springdoc OpenAPI |
+| Persistence | Spring Data JPA, PostgreSQL 17, Flyway |
+| Security | Spring Security, BCrypt, HTTP-only session cookie, server-side admin sessions |
+| Real-time | Spring WebSocket, STOMP, SockJS |
+| Messaging | TurboSMS API with a local mock provider |
+| Testing | JUnit 5, Mockito, MockMvc, H2 |
+| Delivery | Maven Wrapper, Docker, Docker Compose |
+
+## Pages
+
+| Page | Purpose |
+| --- | --- |
+| `/` | Public doctor landing page |
+| `/booking.html` | Patient appointment flow |
+| `/cancel.html?token=...` | Patient self-service cancellation |
+| `/admin-login.html` | Doctor login page |
+| `/doctor.html` | Doctor appointments dashboard |
+| `/doctor-slots.html` | Doctor schedule management |
+| `/swagger-ui.html` | Interactive API documentation |
+
+## API overview
+
+| Endpoint | Access | Purpose |
+| --- | --- | --- |
+| `GET /api/slots?date=...&type=ONLINE|OFFLINE` | Public | List slots for a date and consultation type |
+| `POST /api/phone/send-code` | Public | Send a verification code to a phone number |
+| `POST /api/slots/{slotId}/confirm` | Public | Confirm an available slot with a phone verification code |
+| `GET /api/slots/cancel-info?token=...` | Public | Show appointment information before cancellation |
+| `POST /api/slots/cancel-by-token?token=...` | Public | Cancel an appointment using its secure token |
+| `POST /api/admin/auth/login` | Public | Authenticate the doctor and issue a session cookie |
+| `GET /api/slots/doctor/appointments?date=...` | Doctor | Review daily appointments |
+| `POST /api/slots` | Doctor | Create time slots for a day |
+| `DELETE /api/slots/{slotId}` | Doctor | Delete a free slot |
+| `POST /api/slots/doctor/appointments/{id}/complete` | Doctor | Mark an appointment as completed |
+| `POST /api/slots/doctor/appointments/{id}/cancel` | Doctor | Cancel an appointment from the dashboard |
+| `POST /api/slots/doctor/appointments/{id}/no-show` | Doctor | Mark an appointment as a no-show |
+
+The WebSocket endpoint is `/ws`; clients subscribe to `/topic/slots` for live slot-status changes.
+
+## Run with Docker Compose
+
+### Prerequisites
+
+- Docker Engine with Docker Compose v2
+
+### 1. Create local environment configuration
 
 ```bash
 cp .env.example .env
 ```
 
-Start PostgreSQL and the application:
+Update the values in `.env`, especially database credentials, the doctor password hash, and `APP_BASE_URL` before a real deployment. `.env` is ignored by Git.
+
+### 2. Start the application
 
 ```bash
 docker compose up --build
 ```
 
-Open:
+Open the application at [http://localhost:8080](http://localhost:8080).
 
-```text
-http://localhost:8080
-```
+The default PostgreSQL port from `.env.example` is `5434`, which avoids conflicts with a locally installed PostgreSQL instance.
 
-API documentation:
-
-```text
-http://localhost:8080/swagger-ui.html
-http://localhost:8080/v3/api-docs
-```
-
-## Run Locally Without Docker
-
-Start PostgreSQL locally and create a database named `med_schedule`, then set environment variables or use the defaults from `application.properties`.
-
-Run:
+### Stop the stack
 
 ```bash
-./mvnw spring-boot:run
+docker compose down
+```
+
+To also delete the local database volume (destructive):
+
+```bash
+docker compose down -v
+```
+
+## Run locally without Docker
+
+### Prerequisites
+
+- JDK 21
+- PostgreSQL 17 (or a compatible PostgreSQL version)
+
+Create the `med_schedule` database, configure the `DATABASE_*` variables if necessary, then run:
+
+```bash
+bash mvnw spring-boot:run
 ```
 
 On Windows:
@@ -90,26 +142,30 @@ On Windows:
 .\mvnw.cmd spring-boot:run
 ```
 
-## Environment Variables
+Flyway applies the versioned schema migrations automatically at startup. The application uses `ddl-auto=validate`, so the schema remains controlled by migrations rather than Hibernate auto-generation.
 
-| Variable | Purpose |
-| --- | --- |
-| `DATABASE_URL` | JDBC URL for PostgreSQL |
-| `DATABASE_USERNAME` | Database user |
-| `DATABASE_PASSWORD` | Database password |
-| `APP_BASE_URL` | Public base URL used in SMS cancellation links |
-| `DOCTOR_ADMIN_PASSWORD_HASH` | BCrypt hash for doctor login |
-| `DOCTOR_ADMIN_COOKIE_SECURE` | Set `true` behind HTTPS |
-| `TURBOSMS_ENABLED` | Enables real SMS sending |
-| `TURBOSMS_API_TOKEN` | TurboSMS API token |
-| `TURBOSMS_SMS_SENDER` | TurboSMS sender name |
+## Configuration
 
-## Tests
+| Variable | Purpose | Local default |
+| --- | --- | --- |
+| `DATABASE_URL` | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/med_schedule` |
+| `DATABASE_USERNAME` | Database user | `myuser2` |
+| `DATABASE_PASSWORD` | Database password | — |
+| `APP_BASE_URL` | Base URL embedded in SMS cancellation links | `http://localhost:8080` |
+| `DOCTOR_ADMIN_PASSWORD_HASH` | BCrypt hash used for doctor login | Demo hash for password `12345` |
+| `DOCTOR_ADMIN_COOKIE_SECURE` | Enables the cookie `Secure` attribute behind HTTPS | `false` |
+| `TURBOSMS_ENABLED` | Sends real SMS messages when `true` | `false` |
+| `TURBOSMS_API_TOKEN` | TurboSMS API token | — |
+| `TURBOSMS_SMS_SENDER` | TurboSMS sender name | — |
 
-Run:
+When `TURBOSMS_ENABLED=false`, SMS messages are written to application logs instead of being sent. This keeps the complete booking flow testable without third-party credentials.
+
+## Testing
+
+Run all tests:
 
 ```bash
-./mvnw test
+bash mvnw test
 ```
 
 On Windows:
@@ -118,33 +174,60 @@ On Windows:
 .\mvnw.cmd test
 ```
 
+The test suite includes:
+
+- unit tests for phone normalization and slot-creation validation;
+- Mockito tests for schedule generation;
+- a MockMvc + H2 integration test that authenticates the doctor, creates slots, sends an OTP, confirms an appointment, cancels it by token, and checks the OpenAPI document.
+
 ## Screenshots
 
-### Home Page
+### Public landing page
 
-![Home Page](screenshots/homePage.png)
+![GastroCare home page](screenshots/homePage.png)
 
-### Booking Page
+### Patient booking flow
 
-![Booking Page](screenshots/booking.png)
+![GastroCare booking page](screenshots/booking.png)
 
-### Doctor Page
+### Doctor workspace
 
-![Doctor Schedule](screenshots/doctor-schedule.png)
-![Doctor Records](screenshots/doctor-records.png)
+![Doctor schedule management](screenshots/doctor-schedule.png)
 
-### Swagger API Docs
+![Doctor appointment records](screenshots/doctor-records.png)
 
-![Swagger API Docs](screenshots/swagger.png)
+### Swagger UI
 
-## Project Notes
+![Swagger API documentation](screenshots/swagger.png)
 
-This project is designed as a portfolio-ready Spring Boot application. The core booking flow is implemented server-side, while the frontend is served as static HTML/CSS/JavaScript from Spring Boot.
+## Project structure
 
-Recommended production steps:
+```text
+src/main/java/.../
+├── config/          # Security, WebSocket, CORS, OpenAPI configuration
+├── controller/      # Patient, phone verification, and doctor API endpoints
+├── dto/             # Request and response contracts
+├── entity/          # JPA domain model and status enums
+├── repository/      # Spring Data repositories and guarded update queries
+├── service/         # Booking flow, OTP, notifications, and login throttling
+└── util/            # Phone validation and normalization
 
-- replace demo admin password hash;
-- enable HTTPS and `DOCTOR_ADMIN_COOKIE_SECURE=true`;
-- configure real TurboSMS credentials;
-- run with a managed PostgreSQL instance;
-- add monitoring and backups.
+src/main/resources/
+├── db/migration/    # Versioned Flyway migrations
+└── static/          # Landing page, booking, cancellation, and doctor UI
+```
+
+## Production considerations
+
+This is a portfolio project, but the next steps for a real medical deployment would be:
+
+- store the doctor password hash and TurboSMS token in a secret manager;
+- run behind HTTPS with `DOCTOR_ADMIN_COOKIE_SECURE=true`;
+- configure trusted proxy handling before relying on `X-Forwarded-For` for login throttling;
+- add audit logging, backups, monitoring, and alerting;
+- move WebSocket messaging and login-attempt tracking to shared infrastructure when running multiple application instances;
+- add consent, retention, and access-control policies appropriate for real patient data.
+
+## What this project demonstrates
+
+This project demonstrates practical Java backend development with Spring Boot, layered REST design, JPA and PostgreSQL schema migrations, concurrency-safe state transitions, Spring Security, session-based authentication, real-time WebSocket communication, third-party API integration, Dockerized local development, and automated testing.
