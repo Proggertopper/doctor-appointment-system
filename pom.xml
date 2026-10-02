@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GastroCare Doctor Appointment System</name>
 	<description>Spring Boot application for managing doctor appointment booking, SMS verification, cancellations, and doctor schedule administration.</description>
-	<url>https://github.com/proggertopper/doctor-registration-system</url>
+	<url>https://github.com/proggertopper/doctor-appointment-system</url>
 	<licenses>
 		<license/>
 	</licenses>
