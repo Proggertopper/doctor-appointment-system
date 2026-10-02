@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кабінет лікаря — GastroCare</title>
+    <style>
+        :root {
+            --bg: #f4f7f6;
+            --surface: #ffffff;
+            --line: #dbe5e1;
+            --text: #17211f;
+            --muted: #64706d;
+            --primary: #1f7a68;
+            --primary-dark: #14594d;
+            --primary-soft: #e4f3ef;
+            --blue: #2563eb;
+            --blue-soft: #eaf1ff;
+            --red: #b42318;
+            --red-soft: #fff0ee;
+            --amber: #9a6700;
+            --amber-soft: #fff6db;
+            --shadow: 0 16px 42px rgba(24, 40, 36, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.45;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            min-height: 40px;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 14px;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        button:hover { background: var(--primary-dark); }
+        button.secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--line);
+        }
+        button.secondary:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+        button.danger {
+            background: var(--red);
+        }
+        button.danger:hover {
+            background: #8f1c13;
+        }
+        button.warning {
+            background: var(--amber);
+        }
+        button.warning:hover {
+            background: #755000;
+        }
+
+        input,
+        select {
+            min-height: 40px;
+            border: 1px solid #cdd9d5;
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: #ffffff;
+            color: var(--text);
+        }
+
+        input:focus,
+        select:focus {
+            outline: 3px solid rgba(31, 122, 104, 0.18);
+            border-color: var(--primary);
+        }
+
+        .page {
+            width: min(1280px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 22px 0 44px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: grid;
+            gap: 3px;
+        }
+
+        .brand strong {
+            font-size: 20px;
+        }
+
+        .brand span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            margin-bottom: 16px;
+        }
+
+        .tab-button {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid transparent;
+        }
+
+        .tab-button.active {
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            border-color: var(--primary);
+        }
+
+        .content {
+            padding: 22px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        h1, h2 {
+            margin: 0;
+            letter-spacing: 0;
+        }
+
+        h1 { font-size: clamp(28px, 4vw, 40px); }
+        h2 { font-size: 22px; }
+
+        .hint {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .filters,
+        .create-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: grid;
+            gap: 6px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fbfdfc;
+        }
+
+        .stat span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .stat strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 26px;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+        }
+
+        .message.success {
+            display: block;
+            background: #e9f7ef;
+            color: #176b48;
+            border: 1px solid #a9dfbd;
+        }
+
+        .message.error {
+            display: block;
+            background: var(--red-soft);
+            color: var(--red);
+            border: 1px solid #f0b7b1;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 880px;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fbfa;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            min-height: 28px;
+            align-items: center;
+            padding: 0 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-CREATED { background: var(--primary-soft); color: var(--primary-dark); }
+        .status-CANCELLED { background: var(--red-soft); color: var(--red); }
+        .status-COMPLETED { background: var(--blue-soft); color: var(--blue); }
+        .status-NO_SHOW { background: var(--amber-soft); color: var(--amber); }
+        .type-ONLINE { background: #e9f7ef; color: #176b48; }
+        .type-OFFLINE { background: var(--blue-soft); color: var(--blue); }
+
+        .row-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .row-actions button {
+            min-height: 34px;
+            padding: 0 10px;
+            font-size: 12px;
+        }
+
+        .slot-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .slot-card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 13px;
+            background: #ffffff;
+        }
+
+        .slot-card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .slot-time {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .empty {
+            padding: 18px;
+            border: 1px dashed #cbd7d3;
+            border-radius: 8px;
+            background: #fbfdfc;
+            color: var(--muted);
+        }
+
+        @media (max-width: 900px) {
+            .filters,
+            .create-grid,
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page { width: min(100% - 20px, 1280px); }
+            .topbar,
+            .section-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .top-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .filters,
+            .create-grid,
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .content { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="topbar">
+        <div class="brand">
+            <strong>GastroCare</strong>
+            <span>Кабінет лікаря · записи та розклад</span>
+        </div>
+        <div class="top-actions">
+            <button class="secondary" type="button" onclick="window.location.href='/'">На сайт</button>
+            <button class="secondary" type="button" onclick="logout()">Вийти</button>
+        </div>
+    </header>
+
+    <nav class="panel tabs" aria-label="Розділи кабінету">
+        <button class="tab-button active" type="button" data-view="appointmentsView">Записи</button>
+        <button class="tab-button" type="button" data-view="scheduleView">Розклад</button>
+    </nav>
+
+    <section id="appointmentsView" class="panel content view active">
+        <div class="section-head">
+            <div>
+                <h1>Записи пацієнтів</h1>
+                <p class="hint">Перегляд прийомів за день, статусів та контактів пацієнтів.</p>
+            </div>
+            <button type="button" onclick="loadAppointments()">Оновити</button>
+        </div>
+
+        <div id="appointmentsMessage" class="message"></div>
+
+        <div class="filters">
+            <label>
+                Дата
+                <input type="date" id="appointmentDate">
+            </label>
+            <label>
+                Формат
+                <select id="appointmentTypeFilter">
+                    <option value="ALL">Усі формати</option>
+                    <option value="ONLINE">Онлайн</option>
+                    <option value="OFFLINE">Офлайн</option>
+                </select>
+            </label>
+            <label>
+                Статус
+                <select id="appointmentStatusFilter">
+                    <option value="ALL">Усі статуси</option>
+                    <option value="CREATED">Активні</option>
+                    <option value="COMPLETED">Завершені</option>
+                    <option value="CANCELLED">Скасовані</option>
+                    <option value="NO_SHOW">Не прийшов</option>
+                </select>
+            </label>
+            <label>
+                Пошук
+                <input id="appointmentSearch" placeholder="Ім'я або телефон">
+            </label>
+        </div>
+
+        <div class="stats">
+            <div class="stat"><span>Усього</span><strong id="statTotal">0</strong></div>
+            <div class="stat"><span>Активні</span><strong id="statActive">0</strong></div>
+            <div class="stat"><span>Онлайн</span><strong id="statOnline">0</strong></div>
+            <div class="stat"><span>Офлайн</span><strong id="statOffline">0</strong></div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Час</th>
+                    <th>Формат</th>
+                    <th>Пацієнт</th>
+                    <th>Телефон</th>
+                    <th>Коментар</th>
+                    <th>Статус</th>
+                    <th>Дії</th>
+                </tr>
+                </thead>
+                <tbody id="appointmentsTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="scheduleView" class="panel content view">
+        <div class="section-head">
+            <div>
+                <h1>Розклад прийому</h1>
+                <p class="hint">Створення слотів та керування вільним часом для запису.</p>
+            </div>
+            <button type="button" onclick="loadSlots()">Оновити</button>
+        </div>
+
+        <div id="scheduleMessage" class="message"></div>
+
+        <section>
+            <h2>Створити слоти</h2>
+            <p class="hint">Система не дублює слоти, якщо такий час уже існує.</p>
+
+            <div class="create-grid">
+                <label>
+                    Дата
+                    <input type="date" id="slotDate">
+                </label>
+                <label>
+                    Початок
+                    <input type="time" id="startTime" value="10:00">
+                </label>
+                <label>
+                    Кінець
+                    <input type="time" id="endTime" value="14:00">
+                </label>
+                <label>
+                    Тривалість, хв
+                    <input type="number" id="durationMinutes" value="30" min="5" step="5">
+                </label>
+                <label>
+                    Формат
+                    <select id="slotType">
+                        <option value="ONLINE">Онлайн</option>
+                        <option value="OFFLINE">Офлайн</option>
+                    </select>
+                </label>
+                <label>
+                    Дія
+                    <button type="button" onclick="createSlots()">Створити слоти</button>
+                </label>
+            </div>
+        </section>
+
+        <section style="margin-top: 26px;">
+            <h2>Слоти на дату</h2>
+            <p class="hint">Видаляти можна тільки вільні слоти.</p>
+
+            <div class="filters">
+                <label>
+                    Дата
+                    <input type="date" id="viewDate">
+                </label>
+                <label>
+                    Формат
+                    <select id="viewType">
+                        <option value="ONLINE">Онлайн</option>
+                        <option value="OFFLINE">Офлайн</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="slots" class="slot-list"></div>
+        </section>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    let allAppointments = [];
+
+    function getTodayIsoDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatTime(time) {
+        return time ? time.substring(0, 5) : '';
+    }
+
+    function escapeHtml(value) {
+        return String(value || '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function formatType(type) {
+        return type === 'ONLINE' ? 'Онлайн' : 'Офлайн';
+    }
+
+    function formatStatus(status) {
+        const names = {
+            CREATED: 'Активний',
+            CANCELLED: 'Скасовано',
+            COMPLETED: 'Завершено',
+            NO_SHOW: 'Не прийшов'
+        };
+        return names[status] || status;
+    }
+
+    function showMessage(id, text, type = 'success') {
+        const box = document.getElementById(id);
+        box.textContent = text;
+        box.className = `message ${type}`;
+    }
+
+    function hideMessage(id) {
+        const box = document.getElementById(id);
+        box.textContent = '';
+        box.className = 'message';
+    }
+
+    function setActiveView(viewId) {
+        document.querySelectorAll('.view').forEach((view) => {
+            view.classList.toggle('active', view.id === viewId);
+        });
+        document.querySelectorAll('.tab-button').forEach((button) => {
+            button.classList.toggle('active', button.dataset.view === viewId);
+        });
+
+        if (viewId === 'appointmentsView') {
+            loadAppointments();
+        } else {
+            loadSlots();
+        }
+    }
+
+    async function loadAppointments() {
+        hideMessage('appointmentsMessage');
+        const date = document.getElementById('appointmentDate').value;
+        const response = await fetch(`/api/slots/doctor/appointments?date=${encodeURIComponent(date)}`);
+
+        if (!response.ok) {
+            showMessage('appointmentsMessage', 'Не вдалося завантажити записи.', 'error');
+            return;
+        }
+
+        allAppointments = await response.json();
+        renderAppointments();
+    }
+
+    function renderAppointments() {
+        const typeFilter = document.getElementById('appointmentTypeFilter').value;
+        const statusFilter = document.getElementById('appointmentStatusFilter').value;
+        const search = document.getElementById('appointmentSearch').value.trim().toLowerCase();
+
+        const filtered = allAppointments.filter((appointment) => {
+            const matchesType = typeFilter === 'ALL' || appointment.type === typeFilter;
+            const matchesStatus = statusFilter === 'ALL' || appointment.status === statusFilter;
+            const target = `${appointment.clientName || ''} ${appointment.clientPhone || ''}`.toLowerCase();
+            return matchesType && matchesStatus && target.includes(search);
+        });
+
+        document.getElementById('statTotal').textContent = allAppointments.length;
+        document.getElementById('statActive').textContent = allAppointments.filter((item) => item.status === 'CREATED').length;
+        document.getElementById('statOnline').textContent = allAppointments.filter((item) => item.type === 'ONLINE').length;
+        document.getElementById('statOffline').textContent = allAppointments.filter((item) => item.type === 'OFFLINE').length;
+
+        const tbody = document.getElementById('appointmentsTable');
+        tbody.innerHTML = '';
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7">Записів за обраними фільтрами немає.</td></tr>';
+            return;
+        }
+
+        filtered.forEach((appointment) => {
+            const tr = document.createElement('tr');
+            const actions = appointment.status === 'CREATED'
+                ? `
+                    <div class="row-actions">
+                        <button type="button" onclick="appointmentAction(${appointment.appointmentId}, 'complete')">Завершити</button>
+                        <button class="warning" type="button" onclick="appointmentAction(${appointment.appointmentId}, 'no-show')">Не прийшов</button>
+                        <button class="danger" type="button" onclick="appointmentAction(${appointment.appointmentId}, 'cancel')">Скасувати</button>
+                    </div>
+                `
+                : '—';
+
+            tr.innerHTML = `
+                <td><strong>${formatTime(appointment.startTime)} - ${formatTime(appointment.endTime)}</strong></td>
+                <td><span class="badge type-${appointment.type}">${formatType(appointment.type)}</span></td>
+                <td>${escapeHtml(appointment.clientName)}</td>
+                <td><a href="tel:${escapeHtml(appointment.clientPhone)}">${escapeHtml(appointment.clientPhone)}</a></td>
+                <td>${escapeHtml(appointment.comment) || '—'}</td>
+                <td><span class="badge status-${appointment.status}">${formatStatus(appointment.status)}</span></td>
+                <td>${actions}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function appointmentAction(appointmentId, action) {
+        const labels = {
+            complete: 'Позначити прийом як завершений?',
+            cancel: 'Скасувати запис і звільнити слот?',
+            'no-show': 'Позначити, що пацієнт не прийшов?'
+        };
+
+        if (!confirm(labels[action])) {
+            return;
+        }
+
+        const response = await fetch(`/api/slots/doctor/appointments/${appointmentId}/${action}`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            showMessage('appointmentsMessage', 'Не вдалося виконати дію.', 'error');
+            return;
+        }
+
+        showMessage('appointmentsMessage', 'Зміни збережено.');
+        await loadAppointments();
+        await loadSlots();
+    }
+
+    async function createSlots() {
+        hideMessage('scheduleMessage');
+
+        const slotDate = document.getElementById('slotDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        const durationMinutes = Number(document.getElementById('durationMinutes').value);
+        const type = document.getElementById('slotType').value;
+
+        if (!slotDate || !startTime || !endTime || !durationMinutes) {
+            showMessage('scheduleMessage', 'Заповніть дату, час і тривалість прийому.', 'error');
+            return;
+        }
+
+        const response = await fetch('/api/slots', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slotDate, startTime, endTime, durationMinutes, type })
+        });
+
+        if (!response.ok) {
+            showMessage('scheduleMessage', 'Не вдалося створити слоти.', 'error');
+            return;
+        }
+
+        const text = await response.text();
+        showMessage('scheduleMessage', text);
+        document.getElementById('viewDate').value = slotDate;
+        document.getElementById('viewType').value = type;
+        await loadSlots();
+    }
+
+    async function loadSlots() {
+        hideMessage('scheduleMessage');
+
+        const date = document.getElementById('viewDate').value;
+        const type = document.getElementById('viewType').value;
+        const response = await fetch(`/api/slots?date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`);
+
+        if (!response.ok) {
+            showMessage('scheduleMessage', 'Не вдалося завантажити слоти.', 'error');
+            return;
+        }
+
+        const slots = await response.json();
+        const container = document.getElementById('slots');
+        container.innerHTML = '';
+
+        if (slots.length === 0) {
+            container.innerHTML = '<div class="empty">На цю дату слотів ще немає.</div>';
+            return;
+        }
+
+        slots.forEach((slot) => {
+            const div = document.createElement('div');
+            div.className = 'slot-card';
+            div.innerHTML = `
+                <div class="slot-card-head">
+                    <div>
+                        <div class="slot-time">${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}</div>
+                        <span class="badge type-${slot.type}">${formatType(slot.type)}</span>
+                    </div>
+                    <span class="badge status-${slot.status}">${slot.status}</span>
+                </div>
+                ${slot.status === 'FREE'
+                    ? `<button class="secondary" type="button" onclick="deleteSlot(${slot.id})">Видалити слот</button>`
+                    : '<span class="hint">Слот не можна видалити, поки він не вільний.</span>'}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    async function deleteSlot(slotId) {
+        if (!confirm('Видалити цей вільний слот?')) {
+            return;
+        }
+
+        const response = await fetch(`/api/slots/${slotId}`, { method: 'DELETE' });
+
+        if (!response.ok) {
+            showMessage('scheduleMessage', 'Не вдалося видалити слот. Видаляти можна тільки вільні слоти.', 'error');
+            return;
+        }
+
+        showMessage('scheduleMessage', 'Слот видалено.');
+        await loadSlots();
+    }
+
+    async function logout() {
+        await fetch('/api/admin/auth/logout', { method: 'POST' });
+        window.location.href = '/admin-login.html';
+    }
+
+    function connectWebSocket() {
+        if (!window.SockJS || !window.Stomp) {
+            return;
+        }
+
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/slots', () => {
+                loadAppointments();
+                loadSlots();
+            });
+        });
+    }
+
+    function init() {
+        const today = getTodayIsoDate();
+        document.getElementById('appointmentDate').value = today;
+        document.getElementById('slotDate').value = today;
+        document.getElementById('viewDate').value = today;
+
+        document.querySelectorAll('.tab-button').forEach((button) => {
+            button.addEventListener('click', () => setActiveView(button.dataset.view));
+        });
+
+        ['appointmentDate', 'appointmentTypeFilter', 'appointmentStatusFilter'].forEach((id) => {
+            document.getElementById(id).addEventListener('change', loadAppointments);
+        });
+        document.getElementById('appointmentSearch').addEventListener('input', renderAppointments);
+        document.getElementById('viewDate').addEventListener('change', loadSlots);
+        document.getElementById('viewType').addEventListener('change', loadSlots);
+
+        connectWebSocket();
+
+        if (window.location.hash === '#schedule') {
+            setActiveView('scheduleView');
+        } else {
+            loadAppointments();
+            loadSlots();
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>

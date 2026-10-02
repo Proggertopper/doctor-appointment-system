@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отмена записи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 400px;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .danger {
+            background: #ffdddd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Отмена записи</h1>
+
+<div class="card">
+    <p id="info">Загрузка...</p>
+
+    <button class="danger" onclick="cancelAppointment()">
+        Да, отменить запись
+    </button>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    async function loadCancelInfo() {
+        if (!token) {
+            document.getElementById('info').innerText = 'Некорректная ссылка отмены';
+            return;
+        }
+
+        const response = await fetch(`/api/slots/cancel-info?token=${token}`);
+
+        if (!response.ok) {
+            document.getElementById('info').innerText = 'Запись не найдена или уже отменена';
+            return;
+        }
+
+        const info = await response.json();
+
+        document.getElementById('info').innerText =
+            `Вы точно хотите отменить запись на ${info.slotDate} ` +
+            `с ${info.startTime} до ${info.endTime}? Формат: ${info.type}`;
+    }
+
+    async function cancelAppointment() {
+        const response = await fetch(`/api/slots/cancel-by-token?token=${token}`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            alert('Не удалось отменить запись');
+            return;
+        }
+
+        alert('Запись отменена');
+        document.getElementById('info').innerText = 'Ваша запись успешно отменена';
+    }
+
+    loadCancelInfo();
+</script>
+
+</body>
+</html>

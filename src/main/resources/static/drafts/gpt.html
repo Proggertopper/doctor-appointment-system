@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лікар гастроентеролог — запис на прийом</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<style>
+    :root {
+        --green: #0f6b3f;
+        --green-dark: #06492a;
+        --green-light: #e9f7ef;
+        --mint: #f3fbf7;
+        --black: #101828;
+        --text: #475467;
+        --muted: #98a2b3;
+        --white: #ffffff;
+        --border: #e4e7ec;
+        --shadow: 0 24px 70px rgba(16, 24, 40, 0.12);
+        --radius: 28px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: var(--black);
+        background: #fff;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    img {
+        max-width: 100%;
+        display: block;
+    }
+
+    .container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+    }
+
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(228, 231, 236, 0.8);
+    }
+
+    .header__inner {
+        height: 86px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logo__icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--green), #25b36b);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .logo strong {
+        display: block;
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .logo small {
+        color: var(--text);
+        font-size: 12px;
+    }
+
+    .nav {
+        display: flex;
+        gap: 28px;
+        color: #344054;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .nav a {
+        transition: 0.2s;
+    }
+
+    .nav a:hover {
+        color: var(--green);
+    }
+
+    .header__actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .phone {
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+
+    .btn {
+        min-height: 54px;
+        padding: 0 26px;
+        border-radius: 16px;
+        border: none;
+        background: var(--green);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.25s;
+        box-shadow: 0 14px 30px rgba(15, 107, 63, 0.22);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        background: var(--green-dark);
+    }
+
+    .btn--small {
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 12px;
+    }
+
+    .btn--ghost {
+        background: white;
+        color: var(--green);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn--ghost:hover {
+        background: var(--green-light);
+        color: var(--green-dark);
+    }
+
+    .burger {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: white;
+    }
+
+    .burger span {
+        width: 18px;
+        height: 2px;
+        background: var(--black);
+        display: block;
+        margin: 5px auto;
+    }
+
+    .hero {
+        position: relative;
+        padding: 80px 0 70px;
+        background:
+                radial-gradient(circle at 15% 20%, rgba(37, 179, 107, 0.12), transparent 30%),
+                linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+        overflow: hidden;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        right: -180px;
+        top: 120px;
+        background: rgba(15, 107, 63, 0.08);
+        border-radius: 50%;
+    }
+
+    .hero__inner {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 64px;
+        align-items: center;
+    }
+
+    .doctor-card {
+        position: relative;
+        border-radius: 34px;
+        padding: 16px;
+        background: white;
+        box-shadow: var(--shadow);
+    }
+
+    .doctor-card::before {
+        content: "";
+        position: absolute;
+        inset: 34px -18px -18px 34px;
+        border-radius: 34px;
+        background: var(--green-light);
+        z-index: -1;
+    }
+
+    .doctor-card__img {
+        width: 100%;
+        aspect-ratio: 0.86 / 1;
+        object-fit: cover;
+        border-radius: 26px;
+        background: #ddd;
+    }
+
+    .doctor-card__badge {
+        position: absolute;
+        right: -18px;
+        top: 40px;
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: white;
+        box-shadow: 0 18px 40px rgba(16, 24, 40, 0.16);
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .doctor-card__badge span {
+        display: block;
+        color: var(--green);
+        font-size: 30px;
+        line-height: 1;
+    }
+
+    .doctor-card__status {
+        position: absolute;
+        left: 32px;
+        right: 32px;
+        bottom: 32px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+    }
+
+    .doctor-card__status span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #12b76a;
+        box-shadow: 0 0 0 6px rgba(18, 183, 106, 0.15);
+    }
+
+    .breadcrumbs {
+        color: var(--muted);
+        margin-bottom: 20px;
+    }
+
+    .label,
+    .section-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        color: var(--green);
+        background: var(--green-light);
+        font-weight: 800;
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .hero h1 {
+        font-size: clamp(38px, 5vw, 68px);
+        line-height: 0.98;
+        margin: 0 0 22px;
+        letter-spacing: -2px;
+    }
+
+    .hero__subtitle {
+        max-width: 680px;
+        color: var(--text);
+        font-size: 19px;
+        line-height: 1.7;
+        margin: 0 0 28px;
+    }
+
+    .hero__stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin: 30px 0;
+    }
+
+    .hero__stats div {
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+    }
+
+    .hero__stats strong {
+        display: block;
+        color: var(--green-dark);
+        font-size: 22px;
+        margin-bottom: 6px;
+    }
+
+    .hero__stats span {
+        color: var(--text);
+        font-size: 14px;
+    }
+
+    .hero__actions {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+    }
+
+    .clinic-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #344054;
+        padding: 14px 18px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: white;
+    }
+
+    .features {
+        padding: 38px 0;
+        background: #f7fbf9;
+    }
+
+    .features__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .feature-card,
+    .service-card,
+    .review-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 30px;
+        transition: 0.25s;
+    }
+
+    .feature-card:hover,
+    .service-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
+        border-color: rgba(15, 107, 63, 0.25);
+    }
+
+    .icon {
+        font-size: 34px;
+        margin-bottom: 22px;
+    }
+
+    .feature-card h3,
+    .service-card h3 {
+        font-size: 22px;
+        margin: 0 0 12px;
+    }
+
+    .feature-card p,
+    .service-card p,
+    .about__text p,
+    .booking__content p {
+        color: var(--text);
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .section {
+        padding: 96px 0;
+    }
+
+    .section--soft {
+        background: #f7fbf9;
+    }
+
+    .section-head {
+        max-width: 680px;
+        margin-bottom: 42px;
+    }
+
+    .section h2 {
+        font-size: clamp(32px, 4vw, 48px);
+        line-height: 1.08;
+        letter-spacing: -1.3px;
+        margin: 0;
+    }
+
+    .about {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 70px;
+    }
+
+    .about__text {
+        display: grid;
+        gap: 20px;
+        font-size: 18px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .timeline {
+        display: grid;
+        gap: 18px;
+    }
+
+    .timeline__item {
+        position: relative;
+        padding: 26px 30px;
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        background: white;
+    }
+
+    .timeline__item span {
+        color: var(--green);
+        font-weight: 800;
+    }
+
+    .timeline__item h3 {
+        margin: 8px 0;
+        font-size: 22px;
+    }
+
+    .timeline__item p {
+        color: var(--text);
+        margin: 0;
+    }
+
+    .section--dark {
+        background: #062f1d;
+        color: white;
+    }
+
+    .section--dark .section-label {
+        background: rgba(255, 255, 255, 0.12);
+        color: #a7f3c8;
+    }
+
+    .reviews {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .review-card {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .review-card p {
+        color: rgba(255, 255, 255, 0.82);
+        line-height: 1.7;
+        margin-top: 0;
+    }
+
+    .booking {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 60px;
+        align-items: start;
+    }
+
+    .form {
+        padding: 34px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 18px;
+    }
+
+    .form label {
+        display: grid;
+        gap: 8px;
+        color: #344054;
+        font-weight: 700;
+    }
+
+    .form input,
+    .form textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px 18px;
+        font: inherit;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form input:focus,
+    .form textarea:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 4px rgba(15, 107, 63, 0.1);
+    }
+
+    .form__message {
+        margin: 0;
+        color: var(--green);
+        font-weight: 700;
+    }
+
+    .footer {
+        padding: 34px 0;
+        background: #f7fbf9;
+        border-top: 1px solid var(--border);
+    }
+
+    .footer__inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        color: var(--text);
+    }
+
+    .footer strong {
+        color: var(--black);
+        font-size: 20px;
+    }
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+        .header__inner {
+            height: 76px;
+        }
+
+        .nav,
+        .phone {
+            display: none;
+        }
+
+        .burger {
+            display: block;
+        }
+
+        .nav.is-open {
+            position: absolute;
+            top: 76px;
+            left: 16px;
+            right: 16px;
+            display: grid;
+            gap: 16px;
+            padding: 22px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            padding-top: 52px;
+        }
+
+        .hero__inner {
+            grid-template-columns: 1fr;
+            gap: 44px;
+        }
+
+        .hero__media {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .features__grid,
+        .services-grid,
+        .reviews {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .about,
+        .booking {
+            grid-template-columns: 1fr;
+            gap: 34px;
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+        .container {
+            width: min(100% - 22px, 1180px);
+        }
+
+        .header__actions .btn {
+            display: none;
+        }
+
+        .hero {
+            padding: 32px 0 48px;
+        }
+
+        .hero__inner {
+            gap: 32px;
+        }
+
+        .hero__content {
+            order: 1;
+        }
+
+        .hero__media {
+            order: 2;
+        }
+
+        .breadcrumbs {
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            letter-spacing: -1px;
+        }
+
+        .hero__subtitle {
+            font-size: 16px;
+        }
+
+        .hero__stats {
+            grid-template-columns: 1fr;
+        }
+
+        .hero__actions {
+            display: grid;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .doctor-card {
+            border-radius: 24px;
+            padding: 10px;
+        }
+
+        .doctor-card__img {
+            border-radius: 18px;
+            aspect-ratio: 1 / 1.08;
+        }
+
+        .doctor-card__badge {
+            right: 12px;
+            top: 18px;
+            padding: 14px 16px;
+        }
+
+        .doctor-card__status {
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            font-size: 14px;
+        }
+
+        .features__grid,
+        .services-grid,
+        .reviews {
+            grid-template-columns: 1fr;
+        }
+
+        .section {
+            padding: 64px 0;
+        }
+
+        .feature-card,
+        .service-card,
+        .review-card,
+        .form {
+            padding: 24px;
+            border-radius: 22px;
+        }
+
+        .footer__inner {
+            display: grid;
+        }
+    }
+</style>
+<body>
+
+<header class="header">
+    <div class="container header__inner">
+        <a href="#" class="logo">
+            <span class="logo__icon">+</span>
+            <span>
+        <strong>MedExpert</strong>
+        <small>персональна медицина</small>
+      </span>
+        </a>
+
+        <nav class="nav" id="nav">
+            <a href="#about">Про лікаря</a>
+            <a href="#services">Послуги</a>
+            <a href="#experience">Досвід</a>
+            <a href="#reviews">Відгуки</a>
+            <a href="#contacts">Контакти</a>
+        </nav>
+
+        <div class="header__actions">
+            <a href="tel:+380000000000" class="phone">+38 000 000 00 00</a>
+            <a href="#booking" class="btn btn--small">Записатись</a>
+            <button class="burger" id="burger" aria-label="Меню">
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <section class="hero">
+        <div class="container hero__inner">
+
+            <div class="hero__media">
+                <div class="doctor-card">
+                    <img src="/images/doctor.jpg" alt="Лікар" class="doctor-card__img" />
+
+                    <div class="doctor-card__badge">
+                        <span>29+</span>
+                        років досвіду
+                    </div>
+
+                    <div class="doctor-card__status">
+                        <span></span>
+                        Прийом доступний цього тижня
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero__content">
+
+                <div class="label">Гастроентеролог · Гепатолог</div>
+
+                <h1>Косинська Світлана Валеріївна</h1>
+
+                <p class="hero__subtitle">
+                    Лікар вищої кваліфікаційної категорії, кандидат медичних наук.
+                    Допомагаю пацієнтам знайти причину симптомів, а не просто тимчасово зняти біль.
+                </p>
+
+                <div class="hero__actions">
+                    <a href="#booking" class="btn">Записатись оффлайн</a>
+                    <a href="#services" class="btn btn--ghost">Записатись онлайн</a>
+                </div>
+
+                <div class="clinic-line">
+                    <span>📍</span>
+                    Діагностичний центр MedExpert, вул. Центральна, 15
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container features__grid">
+            <div class="feature-card">
+                <div class="icon">🩺</div>
+                <h3>Комплексний підхід</h3>
+                <p>Оцінка симптомів, аналізів, харчування, способу життя та попереднього лікування.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🔬</div>
+                <h3>Точна діагностика</h3>
+                <p>Призначення тільки необхідних обстежень без зайвих витрат для пацієнта.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">💚</div>
+                <h3>Зрозуміле лікування</h3>
+                <p>Пацієнт отримує чіткий план: що робити, коли прийти повторно і які результати очікувати.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="container about">
+            <div>
+                <span class="section-label">Про лікаря</span>
+                <h2>Лікування без шаблонів — з увагою до кожного пацієнта</h2>
+            </div>
+
+            <div class="about__text">
+                <p>
+                    Лікар спеціалізується на захворюваннях шлунково-кишкового тракту,
+                    печінки, жовчного міхура та підшлункової залози.
+                </p>
+                <p>
+                    Основний принцип роботи — не маскувати симптоми, а знайти їхню причину,
+                    пояснити пацієнту ситуацію простою мовою та підібрати ефективний план лікування.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section--soft" id="services">
+        <div class="container">
+            <div class="section-head">
+                <span class="section-label">Напрями роботи</span>
+                <h2>З чим можна звернутися</h2>
+            </div>
+
+            <div class="services-grid">
+                <article class="service-card">
+                    <h3>Біль у животі</h3>
+                    <p>Діагностика причин болю, здуття, спазмів, дискомфорту після їжі.</p>
+                </article>
+
+                <article class="service-card">
+                    <h3>Печія та рефлюкс</h3>
+                    <p>Лікування ГЕРХ, печії, кислого присмаку, відрижки та подразнення стравоходу.</p>
+                </article>
+
+                <article class="service-card">
+                    <h3>Проблеми з печінкою</h3>
+                    <p>Консультація при змінах аналізів, жировій хворобі печінки, гепатитах.</p>
+                </article>
+
+                <article class="service-card">
+                    <h3>Порушення травлення</h3>
+                    <p>Нудота, тяжкість, здуття, нестабільний стілець, непереносимість продуктів.</p>
+                </article>
+
+                <article class="service-card">
+                    <h3>Жовчний міхур</h3>
+                    <p>Дискінезія, камені, застій жовчі, біль у правому підребер’ї.</p>
+                </article>
+
+                <article class="service-card">
+                    <h3>Профілактичний огляд</h3>
+                    <p>Оцінка стану ШКТ, рекомендації щодо харчування та профілактики загострень.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="experience">
+        <div class="container timeline-wrap">
+            <div class="section-head">
+                <span class="section-label">Досвід</span>
+                <h2>Професійний шлях</h2>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline__item">
+                    <span>1995</span>
+                    <h3>Початок медичної практики</h3>
+                    <p>Робота з пацієнтами гастроентерологічного профілю.</p>
+                </div>
+
+                <div class="timeline__item">
+                    <span>2008</span>
+                    <h3>Вища кваліфікаційна категорія</h3>
+                    <p>Поглиблена спеціалізація у діагностиці та лікуванні захворювань ШКТ.</p>
+                </div>
+
+                <div class="timeline__item">
+                    <span>2024</span>
+                    <h3>Сучасний підхід до лікування</h3>
+                    <p>Доказова медицина, персоналізовані рекомендації та контроль результату.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section--dark" id="reviews">
+        <div class="container">
+            <div class="section-head">
+                <span class="section-label">Відгуки</span>
+                <h2>Що кажуть пацієнти</h2>
+            </div>
+
+            <div class="reviews">
+                <div class="review-card">
+                    <p>“Дуже уважний лікар. Нарешті мені пояснили, що відбувається і як це лікувати.”</p>
+                    <strong>Олена</strong>
+                </div>
+
+                <div class="review-card">
+                    <p>“Отримав чіткий план лікування, без зайвих препаратів і незрозумілих призначень.”</p>
+                    <strong>Андрій</strong>
+                </div>
+
+                <div class="review-card">
+                    <p>“Спокійна атмосфера, детальна консультація, все зрозуміло та професійно.”</p>
+                    <strong>Марина</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="booking">
+        <div class="container booking">
+            <div class="booking__content">
+                <span class="section-label">Запис на прийом</span>
+                <h2>Залиште заявку — ми зв’яжемося з вами</h2>
+                <p>
+                    Вкажіть ім’я та номер телефону. Адміністратор уточнить зручний час прийому.
+                </p>
+            </div>
+
+            <form class="form" id="bookingForm">
+                <label>
+                    Ваше ім’я
+                    <input type="text" name="name" placeholder="Наприклад, Олександр" required />
+                </label>
+
+                <label>
+                    Телефон
+                    <input type="tel" name="phone" placeholder="+38 (___) ___ __ __" required />
+                </label>
+
+                <label>
+                    Коментар
+                    <textarea name="message" placeholder="Коротко опишіть проблему"></textarea>
+                </label>
+
+                <button type="submit" class="btn">Надіслати заявку</button>
+                <p class="form__message" id="formMessage"></p>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer" id="contacts">
+    <div class="container footer__inner">
+        <div>
+            <strong>MedExpert</strong>
+            <p>Персональна сторінка лікаря</p>
+        </div>
+
+        <div>
+            <p>Телефон: +38 000 000 00 00</p>
+            <p>Адреса: вул. Центральна, 15</p>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

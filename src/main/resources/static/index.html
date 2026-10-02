@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GastroCare — Косинська Світлана Валеріївна</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --green:       #16a34a;
+            --green-dark:  #15803d;
+            --green-light: #dcfce7;
+            --blue:        #2563eb;
+            --blue-dark:   #1d4ed8;
+
+            --text:        #0f172a;
+            --muted:       #64748b;
+            --white:       #ffffff;
+            --bg:          #f8fafc;
+            --border:      #e2e8f0;
+            --shadow-sm:   0 1px 4px rgba(15,23,42,0.08);
+            --shadow-md:   0 8px 32px rgba(15,23,42,0.10);
+            --shadow-lg:   0 20px 48px rgba(15,23,42,0.13);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--text);
+            background: var(--white);
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .site-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--green-dark);
+            flex-shrink: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .site-name-text {
+            display: grid;
+            gap: 1px;
+            line-height: 1.05;
+        }
+
+        .site-name-text span {
+            color: var(--muted);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0;
+        }
+
+        .site-name-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .site-name-icon svg { width: 18px; height: 18px; }
+
+        nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        nav a {
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        nav a:hover { background: #f1f5f9; color: var(--text); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .header-phone {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background 0.2s, transform 0.1s;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary { background: var(--green); color: var(--white); }
+        .btn-primary:hover { background: var(--green-dark); }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            margin-left: auto;
+            background: none;
+            border: none;
+        }
+
+        .burger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+        }
+
+        .mobile-nav {
+            display: none;
+            flex-direction: column;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            padding: 12px 24px 16px;
+            gap: 4px;
+        }
+
+        .mobile-nav.open { display: flex; }
+
+        .mobile-nav a {
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .mobile-nav .btn { margin-top: 8px; width: 100%; text-align: center; }
+
+        /* ── HERO ── */
+        .hero {
+            background: var(--white);
+            padding: 64px 0 72px;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            align-items: center;
+            gap: 64px;
+        }
+
+        .doctor-photo {
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            background: #e2e8f0;
+            aspect-ratio: 4/5;
+        }
+
+        .doctor-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-content { display: flex; flex-direction: column; gap: 20px; }
+
+        .hero-specialty {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            width: fit-content;
+        }
+
+        .hero-badge svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .hero-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .hero-location svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        .hero-btn {
+            display: inline-block;
+            background: var(--green);
+            color: var(--white);
+            padding: 16px 36px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            width: fit-content;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(22,163,74,0.25);
+        }
+
+        .hero-btn:hover {
+            background: var(--green-dark);
+            box-shadow: 0 6px 24px rgba(22,163,74,0.35);
+        }
+
+        .hero-btn:active { transform: scale(0.97); }
+
+        /* ── STATS ── */
+        .stats {
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 40px 0;
+        }
+
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item {
+            background: var(--white);
+            padding: 28px 32px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--green);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            color: var(--muted);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* ── FORMATS ── */
+        .formats {
+            padding: 72px 0 80px;
+            background: var(--white);
+        }
+
+        .formats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0 0 12px;
+            letter-spacing: -0.03em;
+        }
+
+        .section-header p {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 540px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .format-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .format-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .format-card:hover {
+            border-color: var(--green);
+            box-shadow: var(--shadow-md);
+        }
+
+        .format-card.offline:hover { border-color: var(--blue); }
+
+        .format-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .format-icon.online  { background: #dcfce7; }
+        .format-icon.offline { background: #dbeafe; }
+        .format-icon svg { width: 28px; height: 28px; }
+
+        .format-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .format-tag.online  { background: #dcfce7; color: #15803d; }
+        .format-tag.offline { background: #dbeafe; color: #1d4ed8; }
+
+        .format-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0 0 10px;
+        }
+
+        .format-card p {
+            font-size: 0.93rem;
+            color: var(--muted);
+            line-height: 1.65;
+            margin: 0 0 24px;
+        }
+
+        .format-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 28px;
+            flex: 1;
+        }
+
+        .format-features li {
+            display: flex;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text);
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            line-height: 1.5;
+            align-items: flex-start;
+        }
+
+        .format-features li:last-child { border-bottom: none; }
+
+        .feat-check {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .format-card-btn {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: background 0.18s, transform 0.1s;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .format-card-btn:active { transform: scale(0.97); }
+        .format-card-btn.online  { background: var(--green); color: var(--white); }
+        .format-card-btn.online:hover  { background: var(--green-dark); }
+        .format-card-btn.offline { background: var(--blue); color: var(--white); }
+        .format-card-btn.offline:hover { background: var(--blue-dark); }
+
+        /* ── INFO SECTIONS ── */
+        .info-section {
+            background: var(--white);
+            padding: 68px 0 0;
+        }
+
+        .info-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .reason-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .reason-item,
+        .process-step {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--white);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .reason-item h3,
+        .process-step h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .reason-item p,
+        .process-step p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .process-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: #0f172a;
+            color: var(--white);
+            padding: 44px 0 26px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: grid;
+            grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(150px, 1fr));
+            gap: 34px;
+        }
+
+        .footer-brand { font-weight: 800; font-size: 1.2rem; margin-bottom: 8px; }
+        .footer-sub { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; max-width: 320px; }
+        .footer-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 12px; color: #e2e8f0; }
+        .footer-links { display: grid; gap: 9px; }
+        .footer-links a,
+        .footer-links span { color: #94a3b8; font-size: 0.88rem; line-height: 1.45; }
+        .footer-links a:hover { color: var(--white); }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 18px 32px 0;
+            border-top: 1px solid rgba(148, 163, 184, 0.22);
+            color: #64748b;
+            font-size: 0.82rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+            .doctor-photo { max-width: 380px; margin: 0 auto; }
+            .stats-inner { grid-template-columns: 1fr; }
+            .format-cards { grid-template-columns: 1fr; }
+            .reason-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .process-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            nav, .header-right { display: none; }
+            .burger { display: flex; }
+        }
+
+        @media (max-width: 600px) {
+            .hero { padding: 40px 0 48px; }
+            .hero-inner { padding: 0 20px; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero-btn { width: 100%; text-align: center; }
+            .stats-inner { padding: 0 20px; }
+            .formats-inner { padding: 0 20px; }
+            .footer-inner { grid-template-columns: 1fr; padding: 0 20px; gap: 26px; }
+            .footer-bottom { padding: 18px 20px 0; }
+            .format-card { padding: 24px; }
+            .info-inner { padding: 0 20px; }
+            .reason-grid,
+            .process-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+    <div class="header-inner">
+
+        <a class="site-name" href="#">
+            <div class="site-name-icon">
+                <svg viewBox="0 0 18 18" fill="none">
+                    <path d="M9 2v14M2 9h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="site-name-text">
+                GastroCare
+                <span>кабінет гастроентеролога</span>
+            </span>
+        </a>
+
+        <nav>
+            <a href="#services">Послуги</a>
+            <a href="#about">Про мене</a>
+            <a href="#contacts">Контакти</a>
+        </nav>
+
+        <div class="header-right">
+            <a class="header-phone" href="tel:+380934234243">+38 093 423 42 43</a>
+            <a class="btn btn-primary" href="/booking.html">Записатись</a>
+        </div>
+
+        <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Меню">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#services"  onclick="closeMenu()">Послуги</a>
+        <a href="#about"     onclick="closeMenu()">Про мене</a>
+        <a href="#contacts"  onclick="closeMenu()">Контакти</a>
+        <a class="btn btn-primary" href="/booking.html" onclick="closeMenu()">Записатись</a>
+    </div>
+</header>
+
+<main>
+
+    <!-- ── HERO ── -->
+    <section class="hero" id="about">
+        <div class="hero-inner">
+
+            <!-- Фото -->
+            <div class="doctor-photo">
+                <img src="/images/doctor.jpg" alt="Косинська Світлана Валеріївна">
+            </div>
+
+            <!-- Текст -->
+            <div class="hero-content">
+                <div class="hero-specialty">Гастроентеролог · Терапевт</div>
+
+                <h1>Косинська Світлана Валеріївна</h1>
+
+                <div class="hero-badge">
+                    <svg viewBox="0 0 18 18" fill="none">
+                        <circle cx="9" cy="9" r="8" stroke="#16a34a" stroke-width="1.5"/>
+                        <path d="M5 9l3 3 5-5" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Стаж роботи 29+ років
+                </div>
+
+                <p class="hero-desc">
+                    Гастроентеролог-гепатолог, вища кваліфікаційна категорія,
+                    кандидат медичних наук. Обласний спеціаліст зі шлунково-кишкових захворювань.
+                </p>
+
+                <div class="hero-location">
+                    <svg viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1.5C5.51 1.5 3.5 3.51 3.5 6c0 3.75 4.5 8.5 4.5 8.5s4.5-4.75 4.5-8.5c0-2.49-2.01-4.5-4.5-4.5z" stroke="#94a3b8" stroke-width="1.3"/>
+                        <circle cx="8" cy="6" r="1.5" stroke="#94a3b8" stroke-width="1.3"/>
+                    </svg>
+                </div>
+
+                <a href="/booking.html" class="hero-btn">Записатись на прийом →</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── STATS ── -->
+    <section class="stats">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <div class="stat-number">29+</div>
+                <div class="stat-label">років досвіду<br>у гастроентерології</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">2</div>
+                <div class="stat-label">формати прийому —<br>онлайн та офлайн</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">К.М.Н.</div>
+                <div class="stat-label">кандидат медичних наук,<br>вища кваліф. категорія</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── WHEN TO VISIT ── -->
+    <section class="info-section" id="when">
+        <div class="info-inner">
+            <div class="section-header">
+                <div class="section-label">Коли звертатися</div>
+                <h2>Питання, з якими допоможе консультація</h2>
+                <p>Запис варто планувати, якщо симптоми повторюються, заважають повсякденному життю або потрібна оцінка результатів обстежень.</p>
+            </div>
+
+            <div class="reason-grid">
+                <article class="reason-item">
+                    <h3>Біль або дискомфорт у животі</h3>
+                    <p>Повторні болі, важкість після їжі, здуття, нудота або порушення апетиту.</p>
+                </article>
+                <article class="reason-item">
+                    <h3>Печія та рефлюкс</h3>
+                    <p>Печіння, кислий присмак, відрижка, дискомфорт після їжі або вночі.</p>
+                </article>
+                <article class="reason-item">
+                    <h3>Порушення травлення</h3>
+                    <p>Закрепи, діарея, нестабільний стілець, непереносимість окремих продуктів.</p>
+                </article>
+                <article class="reason-item">
+                    <h3>Питання щодо печінки</h3>
+                    <p>Зміни в аналізах, жировий гепатоз, вірусні гепатити, контроль лікування.</p>
+                </article>
+                <article class="reason-item">
+                    <h3>Розбір обстежень</h3>
+                    <p>Консультація за результатами УЗД, ФГДС, колоноскопії, аналізів крові.</p>
+                </article>
+                <article class="reason-item">
+                    <h3>План лікування</h3>
+                    <p>Підбір терапії, корекція призначень, рекомендації щодо харчування та режиму.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── PROCESS ── -->
+    <section class="info-section" id="process">
+        <div class="info-inner">
+            <div class="section-header">
+                <div class="section-label">Як проходить консультація</div>
+                <h2>Зрозумілий процес без зайвих кроків</h2>
+                <p>Онлайн і офлайн прийом будуються за однаковою логікою: уважний збір інформації, оцінка документів та конкретний план дій.</p>
+            </div>
+
+            <div class="process-grid">
+                <article class="process-step">
+                    <div class="process-number">1</div>
+                    <h3>Збір скарг</h3>
+                    <p>Лікар уточнює симптоми, історію хвороби, ліки та попередні діагнози.</p>
+                </article>
+                <article class="process-step">
+                    <div class="process-number">2</div>
+                    <h3>Аналіз обстежень</h3>
+                    <p>За потреби розглядаються результати аналізів, УЗД, ендоскопії та виписки.</p>
+                </article>
+                <article class="process-step">
+                    <div class="process-number">3</div>
+                    <h3>План діагностики</h3>
+                    <p>Пацієнт отримує перелік потрібних досліджень без зайвих призначень.</p>
+                </article>
+                <article class="process-step">
+                    <div class="process-number">4</div>
+                    <h3>Рекомендації</h3>
+                    <p>Формується план лікування, харчування та подальшого контролю стану.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FORMATS ── -->
+    <section class="formats" id="services">
+        <div class="formats-inner">
+
+            <div class="section-header">
+                <div class="section-label">Формати консультацій</div>
+                <h2>Два зручних формати прийому</h2>
+                <p>Оберіть формат, який зручний саме вам. Кваліфікована допомога доступна онлайн або особисто.</p>
+            </div>
+
+            <div class="format-cards">
+
+                <!-- ОНЛАЙН -->
+                <div class="format-card">
+                    <div class="format-icon online">
+                        <svg viewBox="0 0 28 28" fill="none">
+                            <rect x="2" y="4" width="24" height="15" rx="2.5" stroke="#16a34a" stroke-width="1.7" fill="none"/>
+                            <path d="M10 19v3M18 19v3M8 22h12" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round"/>
+                            <circle cx="14" cy="11.5" r="3.2" stroke="#16a34a" stroke-width="1.5" fill="none"/>
+                            <path d="M8.5 15.5c.8-2 2.9-3.5 5.5-3.5s4.7 1.5 5.5 3.5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                    </div>
+
+                    <span class="format-tag online">Телемедицина</span>
+                    <h3>Онлайн-консультація</h3>
+
+                    <p>Ідеальний вибір для тих, хто цінує час, знаходиться в іншому місті чи країні, або потребує оперативного коригування лікування.</p>
+
+                    <ul class="format-features">
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#16a34a" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Як відбувається:</b> відео- або аудіодзвінок у зручному месенджері</span>
+                        </li>
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#16a34a" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Що входить:</b> розбір скарг, аналіз обстежень, план діагностики або корекція терапії</span>
+                        </li>
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#16a34a" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Переваги:</b> не потрібно їхати до клініки, доступно з будь-якої точки світу</span>
+                        </li>
+                    </ul>
+
+                    <a href="/booking.html?type=ONLINE" class="format-card-btn online">Обрати онлайн →</a>
+                </div>
+
+                <!-- ОФЛАЙН -->
+                <div class="format-card offline">
+                    <div class="format-icon offline">
+                        <svg viewBox="0 0 28 28" fill="none">
+                            <rect x="3" y="8" width="22" height="17" rx="2" stroke="#2563eb" stroke-width="1.7" fill="none"/>
+                            <path d="M8 8V5.5A.5.5 0 018.5 5h11a.5.5 0 01.5.5V8" stroke="#2563eb" stroke-width="1.5" fill="none"/>
+                            <path d="M10 14h8M10 18h5" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M8 3v4M20 3v4" stroke="#2563eb" stroke-width="1.4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <span class="format-tag offline">В клініці</span>
+                    <h3>Офлайн-прийом</h3>
+
+                    <p>Класичний формат для повноцінної первинної діагностики та особистого контакту з лікарем у сучасному медичному центрі.</p>
+
+                    <ul class="format-features">
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#2563eb" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Як відбувається:</b> особистий візит до медичного центру за попереднім записом</span>
+                        </li>
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#2563eb" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Що входить:</b> детальний огляд, збір анамнезу, медична карта, призначення досліджень</span>
+                        </li>
+                        <li>
+                            <svg class="feat-check" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="#2563eb" stroke-width="1.4"/>
+                                <path d="M6 10l3 3 5-5" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span><b>Переваги:</b> фізичний огляд на місці, максимальна точність для первинної діагностики</span>
+                        </li>
+                    </ul>
+
+                    <a href="/booking.html?type=OFFLINE" class="format-card-btn offline">Обрати офлайн →</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer" id="contacts">
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">GastroCare</div>
+            <div class="footer-sub">
+                Особистий сайт лікаря-гастроентеролога Косинської Світлани Валеріївни.
+                Онлайн та офлайн консультації за попереднім записом.
+            </div>
+        </div>
+        <div class="footer-links">
+            <div class="footer-title">Запис</div>
+            <a href="/booking.html?type=ONLINE">Онлайн-консультація</a>
+            <a href="/booking.html?type=OFFLINE">Офлайн-прийом</a>
+        </div>
+        <div class="footer-links">
+            <div class="footer-title">Контакти</div>
+            <a href="tel:+380934234243">+380934234243</a>
+            <span>Консультації онлайн та в клініці</span>
+            <span>Попередній запис обов'язковий</span>
+        </div>
+        <div class="footer-links">
+            <div class="footer-title">Інформація</div>
+            <a href="/privacy.html">Політика конфіденційності</a>
+            <a href="#services">Формати прийому</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 GastroCare. Всі права захищені.</span>
+        <span>Інформація на сайті не замінює очну консультацію лікаря.</span>
+    </div>
+</footer>
+
+<script>
+    function toggleMenu() {
+        document.getElementById('mobileNav').classList.toggle('open');
+    }
+    function closeMenu() {
+        document.getElementById('mobileNav').classList.remove('open');
+    }
+    document.addEventListener('click', function(e) {
+        var nav = document.getElementById('mobileNav');
+        var burger = document.getElementById('burger');
+        if (nav.classList.contains('open') && !nav.contains(e.target) && !burger.contains(e.target)) {
+            nav.classList.remove('open');
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запис до лікаря</title>
+    <style>
+        :root {
+            --bg: #f5f7f8;
+            --surface: #ffffff;
+            --surface-muted: #eef4f3;
+            --text: #17211f;
+            --muted: #64706d;
+            --line: #dbe4e1;
+            --primary: #1f7a68;
+            --primary-dark: #14594d;
+            --primary-soft: #e4f3ef;
+            --danger: #b42318;
+            --danger-soft: #fff0ee;
+            --warning-soft: #fff7df;
+            --success: #176b48;
+            --success-soft: #e9f7ef;
+            --shadow: 0 18px 45px rgba(25, 41, 37, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 48px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand strong {
+            font-size: 18px;
+            letter-spacing: 0;
+        }
+
+        .brand span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 40px;
+            padding: 0 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) 380px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .main-panel {
+            padding: 28px;
+        }
+
+        .side-panel {
+            padding: 22px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.08;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            max-width: 760px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .section {
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+            margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 0;
+        }
+
+        .hint {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: grid;
+            gap: 7px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid #cfdad6;
+            border-radius: 8px;
+            background: #ffffff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 94px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 3px solid rgba(31, 122, 104, 0.18);
+            border-color: var(--primary);
+        }
+
+        .type-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .type-option {
+            min-height: 44px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .type-option.active {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+        }
+
+        .date-picker {
+            display: grid;
+            gap: 9px;
+        }
+
+        .date-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .date-chip {
+            min-height: 58px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .date-chip.active {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+
+        .date-chip strong,
+        .date-chip span {
+            display: block;
+        }
+
+        .date-chip strong {
+            font-size: 14px;
+        }
+
+        .date-chip span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .date-input-row {
+            display: grid;
+            grid-template-columns: auto minmax(170px, 240px);
+            gap: 10px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            min-height: 56px;
+        }
+
+        .slot {
+            min-height: 52px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+        }
+
+        .slot:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .slot.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+
+        .slot strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .slot span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .empty,
+        .loading {
+            padding: 16px;
+            border: 1px dashed #cbd7d3;
+            border-radius: 8px;
+            background: #fafcfc;
+            color: var(--muted);
+            grid-column: 1 / -1;
+        }
+
+        .message {
+            display: none;
+            margin: 18px 0 0;
+            padding: 13px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .message.info {
+            display: block;
+            background: #eef6ff;
+            color: #174a7c;
+            border: 1px solid #bad7f5;
+        }
+
+        .message.success {
+            display: block;
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid #a9dfbd;
+        }
+
+        .message.error {
+            display: block;
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #f0b7b1;
+        }
+
+        .form-message {
+            margin: 0 0 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-grid .wide {
+            grid-column: 1 / -1;
+        }
+
+        .sms-field {
+            display: none;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        button,
+        .button {
+            min-height: 44px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #ffffff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        button:hover,
+        .button:hover {
+            background: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        button.secondary {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        button.secondary:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        button:disabled {
+            background: #9dafaa;
+            cursor: not-allowed;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .checkbox input {
+            width: 18px;
+            height: 18px;
+            min-height: 18px;
+            margin-top: 2px;
+            flex: 0 0 auto;
+        }
+
+        .summary {
+            display: grid;
+            gap: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .summary-row span {
+            color: var(--muted);
+        }
+
+        .summary-row strong {
+            text-align: right;
+        }
+
+        .notice {
+            margin-top: 16px;
+            padding: 13px;
+            border-radius: 8px;
+            background: var(--warning-soft);
+            color: #745111;
+            font-size: 14px;
+        }
+
+        .format-note {
+            margin-top: 12px;
+            padding: 13px;
+            border-radius: 8px;
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .empty-action {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 12px;
+            min-height: 38px;
+            padding: 0 13px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .success-card {
+            display: none;
+            padding: 24px;
+            border: 1px solid #a9dfbd;
+            border-radius: 8px;
+            background: var(--success-soft);
+            color: var(--success);
+        }
+
+        .success-card h2 {
+            margin-bottom: 12px;
+        }
+
+        .success-card p {
+            margin: 8px 0;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                padding-top: 16px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .main-panel,
+            .side-panel {
+                padding: 18px;
+            }
+
+            .controls,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .date-strip {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .date-input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                align-items: start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="topbar">
+        <div class="brand">
+            <strong>Косинська Світлана Валеріївна</strong>
+            <span>Гастроентеролог · онлайн та офлайн консультації</span>
+        </div>
+        <a class="back-link" href="/">На головну</a>
+    </header>
+
+    <div class="layout">
+        <section class="panel main-panel">
+            <p class="eyebrow">Онлайн-запис</p>
+            <h1>Оберіть зручний час прийому</h1>
+            <p class="lead">
+                Виберіть дату, формат консультації та вільний слот. Після SMS-підтвердження запис буде збережено в розкладі лікаря.
+            </p>
+
+            <div id="messageBox" class="message" role="status"></div>
+
+            <div id="bookingSelection">
+                <section class="section">
+                    <div class="section-header">
+                        <div>
+                            <h2>Коли зручно прийти?</h2>
+                            <p class="hint">Оберіть найближчу дату або відкрийте календар.</p>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <label class="date-picker">
+                            Дата прийому
+                            <div class="date-strip" id="quickDates"></div>
+                            <div class="date-input-row">
+                                <span>Інша дата</span>
+                                <input type="date" id="date">
+                            </div>
+                        </label>
+
+                        <label>
+                            Формат консультації
+                            <div class="type-toggle">
+                                <button class="type-option" type="button" data-type="ONLINE">Онлайн</button>
+                                <button class="type-option" type="button" data-type="OFFLINE">Офлайн</button>
+                            </div>
+                            <select id="type" hidden>
+                                <option value="ONLINE">Онлайн</option>
+                                <option value="OFFLINE">Офлайн</option>
+                            </select>
+                            <div id="formatNote" class="format-note"></div>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-header">
+                        <div>
+                            <h2>Вільний час</h2>
+                            <p class="hint">Список оновлюється автоматично, якщо слот зайняли або звільнили.</p>
+                        </div>
+                    </div>
+                    <div id="slots" class="slot-grid"></div>
+                </section>
+            </div>
+
+            <section id="bookingForm" class="section" style="display: none;">
+                <div class="section-header">
+                    <div>
+                        <h2>Ваші дані</h2>
+                        <p class="hint">Обраний час: <strong id="selectedSlotTime"></strong></p>
+                    </div>
+                </div>
+
+                <div id="formMessageBox" class="message form-message" role="status"></div>
+
+                <div class="form-grid">
+                    <label>
+                        Ім'я та прізвище
+                        <input id="clientName" autocomplete="name" maxlength="100" placeholder="Наприклад, Олена Петренко">
+                    </label>
+
+                    <label>
+                        Телефон
+                        <input id="clientPhone" autocomplete="tel" inputmode="tel" maxlength="17" placeholder="+380 XX XXX XX XX">
+                    </label>
+
+                    <label id="smsCodeField" class="sms-field">
+                        SMS-код
+                        <input id="verificationCode" inputmode="numeric" maxlength="10" placeholder="6 цифр">
+                    </label>
+
+                    <label>
+                        Коментар
+                        <textarea id="comment" maxlength="1000" placeholder="Коротко опишіть питання, якщо потрібно"></textarea>
+                    </label>
+
+                    <label class="checkbox wide">
+                        <input type="checkbox" id="privacyAgree">
+                        <span>
+                            Я погоджуюся на обробку персональних даних для запису на прийом та ознайомився/ознайомилась з
+                            <a href="/privacy.html" target="_blank" rel="noopener">політикою конфіденційності</a>.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="actions">
+                    <button id="sendCodeButton" type="button">Отримати SMS-код</button>
+                    <button id="confirmButton" type="button" style="display: none;">Підтвердити запис</button>
+                    <button class="secondary" id="changeSlotButton" type="button">Обрати інший час</button>
+                </div>
+            </section>
+
+            <section id="successBlock" class="success-card">
+                <h2>Запис підтверджено</h2>
+                <p><strong>Дата:</strong> <span id="successDate"></span></p>
+                <p><strong>Час:</strong> <span id="successTime"></span></p>
+                <p><strong>Формат:</strong> <span id="successType"></span></p>
+                <p><strong>Телефон:</strong> <span id="successPhone"></span></p>
+                <p>
+                    Деталі запису та посилання для скасування будуть надіслані SMS-повідомленням.
+                </p>
+                <div class="actions">
+                    <a class="button" href="/">Повернутися на головну</a>
+                    <button class="secondary" type="button" id="newBookingButton">Створити ще один запис</button>
+                </div>
+            </section>
+        </section>
+
+        <aside class="panel side-panel">
+            <h2>Підсумок</h2>
+            <div class="summary" aria-live="polite">
+                <div class="summary-row">
+                    <span>Дата</span>
+                    <strong id="summaryDate">-</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Формат</span>
+                    <strong id="summaryType">-</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Час</span>
+                    <strong id="summaryTime">Не обрано</strong>
+                </div>
+            </div>
+            <div class="notice">
+                Слот остаточно бронюється тільки після введення правильного SMS-коду.
+            </div>
+        </aside>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    let selectedSlot = null;
+    let stompClient = null;
+    let resendTimer = null;
+    let smsCodeSent = false;
+
+    const messageBox = document.getElementById('messageBox');
+    const formMessageBox = document.getElementById('formMessageBox');
+    const dateInput = document.getElementById('date');
+    const quickDates = document.getElementById('quickDates');
+    const typeInput = document.getElementById('type');
+    const formatNote = document.getElementById('formatNote');
+    const slotsContainer = document.getElementById('slots');
+    const bookingSelection = document.getElementById('bookingSelection');
+    const bookingForm = document.getElementById('bookingForm');
+    const successBlock = document.getElementById('successBlock');
+    const sendCodeButton = document.getElementById('sendCodeButton');
+    const confirmButton = document.getElementById('confirmButton');
+    const clientPhoneInput = document.getElementById('clientPhone');
+    const smsCodeField = document.getElementById('smsCodeField');
+
+    const backendMessages = {
+        'This slot is already taken': 'Цей час щойно зайняв інший пацієнт. Оберіть інший вільний слот.',
+        'Invalid phone number': 'Введіть коректний номер телефону у форматі +380 XX XXX XX XX.',
+        'Sms code was already sent recently': 'SMS-код уже було надіслано. Спробуйте повторити через хвилину.',
+        'Too many sms codes requested': 'Занадто багато спроб отримати SMS-код. Спробуйте пізніше.',
+        'You already have an active appointment. Please cancel it or visit the doctor first.': 'У вас уже є активний запис. Скасуйте його або дочекайтеся прийому.',
+        'Invalid verification code': 'Невірний SMS-код. Перевірте код і спробуйте ще раз.',
+        'Verification code expired': 'Термін дії SMS-коду минув. Отримайте новий код.',
+        'Slot not found': 'Слот не знайдено.',
+        'Active appointment not found': 'Активний запис не знайдено.',
+        'Appointment not found or already cancelled': 'Запис не знайдено або його вже скасовано.'
+    };
+
+    function showMessage(text, type = 'info') {
+        messageBox.textContent = text;
+        messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+        messageBox.textContent = '';
+        messageBox.className = 'message';
+    }
+
+    function showFormMessage(text, type = 'info') {
+        formMessageBox.textContent = text;
+        formMessageBox.className = `message form-message ${type}`;
+    }
+
+    function hideFormMessage() {
+        formMessageBox.textContent = '';
+        formMessageBox.className = 'message form-message';
+    }
+
+    function getTodayIsoDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatDate(isoDate) {
+        if (!isoDate) {
+            return '-';
+        }
+
+        return new Intl.DateTimeFormat('uk-UA', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        }).format(new Date(`${isoDate}T00:00:00`));
+    }
+
+    function addDays(date, days) {
+        const copy = new Date(date);
+        copy.setDate(copy.getDate() + days);
+        return copy;
+    }
+
+    function toIsoDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatShortDate(isoDate) {
+        return new Intl.DateTimeFormat('uk-UA', {
+            day: '2-digit',
+            month: 'short'
+        }).format(new Date(`${isoDate}T00:00:00`));
+    }
+
+    function formatWeekday(isoDate) {
+        return new Intl.DateTimeFormat('uk-UA', {
+            weekday: 'short'
+        }).format(new Date(`${isoDate}T00:00:00`));
+    }
+
+    function formatTime(time) {
+        return time ? time.substring(0, 5) : '';
+    }
+
+    function formatAppointmentType(type) {
+        return type === 'ONLINE' ? 'Онлайн консультація' : 'Офлайн прийом';
+    }
+
+    function getFormatNote(type) {
+        if (type === 'ONLINE') {
+            return 'Після підтвердження запису лікар або адміністратор надішле деталі онлайн-консультації.';
+        }
+
+        return 'Для офлайн-прийому бажано прийти на 5-10 хвилин раніше та взяти попередні обстеження.';
+    }
+
+    function updateTypeButtons() {
+        document.querySelectorAll('.type-option').forEach((button) => {
+            button.classList.toggle('active', button.dataset.type === typeInput.value);
+        });
+
+        formatNote.textContent = getFormatNote(typeInput.value);
+    }
+
+    function renderQuickDates() {
+        const today = new Date(`${getTodayIsoDate()}T00:00:00`);
+        quickDates.innerHTML = '';
+
+        for (let index = 0; index < 4; index++) {
+            const date = addDays(today, index);
+            const isoDate = toIsoDate(date);
+            const button = document.createElement('button');
+            const label = index === 0 ? 'Сьогодні' : index === 1 ? 'Завтра' : formatWeekday(isoDate);
+
+            button.type = 'button';
+            button.className = isoDate === dateInput.value ? 'date-chip active' : 'date-chip';
+            button.dataset.date = isoDate;
+            button.innerHTML = `<strong>${label}</strong><span>${formatShortDate(isoDate)}</span>`;
+            button.addEventListener('click', () => {
+                dateInput.value = isoDate;
+                changeFilters();
+            });
+
+            quickDates.appendChild(button);
+        }
+    }
+
+    function updateSummary() {
+        document.getElementById('summaryDate').textContent = formatDate(dateInput.value);
+        document.getElementById('summaryType').textContent = formatAppointmentType(typeInput.value);
+        document.getElementById('summaryTime').textContent = selectedSlot
+            ? `${formatTime(selectedSlot.startTime)} - ${formatTime(selectedSlot.endTime)}`
+            : 'Не обрано';
+    }
+
+    function resetSmsConfirmation() {
+        smsCodeSent = false;
+        smsCodeField.style.display = 'none';
+        confirmButton.style.display = 'none';
+        document.getElementById('verificationCode').value = '';
+    }
+
+    function showSmsConfirmation() {
+        smsCodeSent = true;
+        smsCodeField.style.display = 'grid';
+        confirmButton.style.display = 'inline-block';
+        document.getElementById('verificationCode').focus();
+    }
+
+    function normalizePhoneInputValue(value) {
+        let digits = value.replace(/\D/g, '');
+
+        if (digits.startsWith('0')) {
+            digits = `38${digits}`;
+        } else if (!digits.startsWith('380') && digits.length > 0) {
+            digits = `380${digits}`;
+        }
+
+        digits = digits.substring(0, 12);
+
+        let formatted = '+380';
+
+        if (digits.length > 3) {
+            formatted += ` ${digits.substring(3, 5)}`;
+        }
+        if (digits.length > 5) {
+            formatted += ` ${digits.substring(5, 8)}`;
+        }
+        if (digits.length > 8) {
+            formatted += ` ${digits.substring(8, 10)}`;
+        }
+        if (digits.length > 10) {
+            formatted += ` ${digits.substring(10, 12)}`;
+        }
+
+        return formatted;
+    }
+
+    function isValidUkrainianPhone(phone) {
+        const digits = phone.replace(/\D/g, '');
+        const validCodes = ['39', '50', '63', '66', '67', '68', '73', '91', '92', '93', '94', '95', '96', '97', '98', '99'];
+        return digits.length === 12 && digits.startsWith('380') && validCodes.includes(digits.substring(3, 5));
+    }
+
+    async function getErrorMessage(response) {
+        try {
+            const error = await response.json();
+            const message = error.message || error.error;
+            return backendMessages[message] || message || 'Сталася помилка. Спробуйте ще раз.';
+        } catch (error) {
+            return 'Сталася помилка. Спробуйте ще раз.';
+        }
+    }
+
+    function setLoadingSlots() {
+        slotsContainer.innerHTML = '<div class="loading">Завантажуємо доступний час...</div>';
+    }
+
+    function renderSlots(slots) {
+        slotsContainer.innerHTML = '';
+
+        const freeSlots = slots.filter((slot) => slot.status === 'FREE');
+
+        if (freeSlots.length === 0) {
+            slotsContainer.innerHTML = `
+                <div class="empty">
+                    На цю дату немає вільного часу для обраного формату.
+                    <button class="empty-action" type="button" id="nextDateButton">Подивитися наступний день</button>
+                </div>
+            `;
+            document.getElementById('nextDateButton').addEventListener('click', () => {
+                const current = new Date(`${dateInput.value}T00:00:00`);
+                dateInput.value = toIsoDate(addDays(current, 1));
+                changeFilters();
+            });
+            return;
+        }
+
+        freeSlots.forEach((slot) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = selectedSlot && selectedSlot.id === slot.id ? 'slot selected' : 'slot';
+            button.innerHTML = `<strong>${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}</strong><span>${formatAppointmentType(slot.type)}</span>`;
+            button.addEventListener('click', () => selectSlot(slot));
+            slotsContainer.appendChild(button);
+        });
+    }
+
+    async function loadSlots() {
+        if (!dateInput.value) {
+            return;
+        }
+
+        setLoadingSlots();
+
+        const response = await fetch(`/api/slots?date=${encodeURIComponent(dateInput.value)}&type=${encodeURIComponent(typeInput.value)}`);
+
+        if (!response.ok) {
+            slotsContainer.innerHTML = '<div class="empty">Не вдалося завантажити доступний час.</div>';
+            showMessage('Не вдалося завантажити доступний час. Перевірте підключення або спробуйте пізніше.', 'error');
+            return;
+        }
+
+        const slots = await response.json();
+
+        if (selectedSlot && !slots.some((slot) => slot.id === selectedSlot.id && slot.status === 'FREE')) {
+            selectedSlot = null;
+            resetSmsConfirmation();
+            bookingForm.style.display = 'none';
+            showMessage('Обраний час більше недоступний. Будь ласка, оберіть інший слот.', 'info');
+        }
+
+        renderSlots(slots);
+        updateSummary();
+    }
+
+    function selectSlot(slot) {
+        selectedSlot = slot;
+        resetSmsConfirmation();
+        hideFormMessage();
+        document.getElementById('selectedSlotTime').textContent = `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`;
+        bookingForm.style.display = 'block';
+        successBlock.style.display = 'none';
+        hideMessage();
+        renderSelectedSlotState();
+        updateSummary();
+        bookingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderSelectedSlotState() {
+        document.querySelectorAll('.slot').forEach((button) => {
+            const time = button.querySelector('strong')?.textContent || '';
+            const selectedTime = selectedSlot ? `${formatTime(selectedSlot.startTime)} - ${formatTime(selectedSlot.endTime)}` : '';
+            button.classList.toggle('selected', time === selectedTime);
+        });
+    }
+
+    function resetFormFields() {
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPhone').value = '';
+        document.getElementById('comment').value = '';
+        document.getElementById('privacyAgree').checked = false;
+        resetSmsConfirmation();
+        hideFormMessage();
+    }
+
+    function startResendTimer() {
+        let seconds = 60;
+        sendCodeButton.disabled = true;
+        sendCodeButton.textContent = `Повторно через ${seconds} с`;
+
+        clearInterval(resendTimer);
+        resendTimer = setInterval(() => {
+            seconds -= 1;
+            sendCodeButton.textContent = `Повторно через ${seconds} с`;
+
+            if (seconds <= 0) {
+                clearInterval(resendTimer);
+                sendCodeButton.disabled = false;
+                sendCodeButton.textContent = 'Отримати SMS-код';
+            }
+        }, 1000);
+    }
+
+    async function sendVerificationCode() {
+        hideMessage();
+        hideFormMessage();
+
+        if (!selectedSlot) {
+            showFormMessage('Спочатку оберіть час прийому.', 'error');
+            return;
+        }
+
+        const phone = clientPhoneInput.value.trim();
+
+        if (!isValidUkrainianPhone(phone)) {
+            showFormMessage('Введіть коректний номер телефону у форматі +380 XX XXX XX XX.', 'error');
+            return;
+        }
+
+        sendCodeButton.disabled = true;
+
+        const response = await fetch('/api/phone/send-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+
+        if (!response.ok) {
+            sendCodeButton.disabled = false;
+            showFormMessage(await getErrorMessage(response), 'error');
+            return;
+        }
+
+        showFormMessage('SMS-код надіслано. Введіть його для підтвердження запису.', 'success');
+        showSmsConfirmation();
+        startResendTimer();
+    }
+
+    async function confirmSlot() {
+        hideMessage();
+        hideFormMessage();
+
+        if (!selectedSlot) {
+            showFormMessage('Спочатку оберіть час прийому.', 'error');
+            return;
+        }
+
+        const clientName = document.getElementById('clientName').value.trim();
+        const clientPhone = clientPhoneInput.value.trim();
+        const verificationCode = document.getElementById('verificationCode').value.trim();
+        const comment = document.getElementById('comment').value.trim();
+        const privacyAgree = document.getElementById('privacyAgree').checked;
+
+        if (!clientName || !clientPhone || !verificationCode) {
+            showFormMessage('Заповніть ім\'я, телефон та SMS-код.', 'error');
+            return;
+        }
+
+        if (!smsCodeSent) {
+            showFormMessage('Спочатку отримайте SMS-код на вказаний номер телефону.', 'error');
+            return;
+        }
+
+        if (!isValidUkrainianPhone(clientPhone)) {
+            showFormMessage('Введіть коректний номер телефону у форматі +380 XX XXX XX XX.', 'error');
+            return;
+        }
+
+        if (!privacyAgree) {
+            showFormMessage('Потрібно погодитися на обробку персональних даних.', 'error');
+            return;
+        }
+
+        confirmButton.disabled = true;
+        confirmButton.textContent = 'Підтверджуємо...';
+
+        const response = await fetch(`/api/slots/${selectedSlot.id}/confirm`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                clientName,
+                clientPhone,
+                verificationCode,
+                comment
+            })
+        });
+
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Підтвердити запис';
+
+        if (!response.ok) {
+            showFormMessage(await getErrorMessage(response), 'error');
+            await loadSlots();
+            return;
+        }
+
+        document.getElementById('successDate').textContent = formatDate(dateInput.value);
+        document.getElementById('successTime').textContent = `${formatTime(selectedSlot.startTime)} - ${formatTime(selectedSlot.endTime)}`;
+        document.getElementById('successType').textContent = formatAppointmentType(typeInput.value);
+        document.getElementById('successPhone').textContent = clientPhone;
+
+        bookingSelection.style.display = 'none';
+        bookingForm.style.display = 'none';
+        successBlock.style.display = 'block';
+        hideMessage();
+        hideFormMessage();
+
+        selectedSlot = null;
+        resetFormFields();
+        updateSummary();
+        await loadSlots();
+        successBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function changeFilters() {
+        selectedSlot = null;
+        bookingForm.style.display = 'none';
+        successBlock.style.display = 'none';
+        bookingSelection.style.display = 'block';
+        resetSmsConfirmation();
+        hideMessage();
+        hideFormMessage();
+        updateTypeButtons();
+        renderQuickDates();
+        updateSummary();
+        loadSlots();
+    }
+
+    function applyInitialState() {
+        const params = new URLSearchParams(window.location.search);
+        const requestedType = params.get('type');
+        const requestedDate = params.get('date');
+        const today = getTodayIsoDate();
+
+        dateInput.min = today;
+        dateInput.value = requestedDate && requestedDate >= today ? requestedDate : today;
+        typeInput.value = requestedType === 'OFFLINE' ? 'OFFLINE' : 'ONLINE';
+
+        updateTypeButtons();
+        renderQuickDates();
+        updateSummary();
+    }
+
+    function connectWebSocket() {
+        if (!window.SockJS || !window.Stomp) {
+            return;
+        }
+
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/slots', () => loadSlots());
+        });
+    }
+
+    dateInput.addEventListener('change', changeFilters);
+
+    document.querySelectorAll('.type-option').forEach((button) => {
+        button.addEventListener('click', () => {
+            typeInput.value = button.dataset.type;
+            changeFilters();
+        });
+    });
+
+    clientPhoneInput.addEventListener('input', () => {
+        clientPhoneInput.value = normalizePhoneInputValue(clientPhoneInput.value);
+        resetSmsConfirmation();
+        hideFormMessage();
+    });
+
+    sendCodeButton.addEventListener('click', sendVerificationCode);
+    confirmButton.addEventListener('click', confirmSlot);
+
+    document.getElementById('changeSlotButton').addEventListener('click', () => {
+        selectedSlot = null;
+        resetSmsConfirmation();
+        bookingForm.style.display = 'none';
+        hideMessage();
+        hideFormMessage();
+        updateSummary();
+        loadSlots();
+    });
+
+    document.getElementById('newBookingButton').addEventListener('click', () => {
+        bookingSelection.style.display = 'block';
+        successBlock.style.display = 'none';
+        selectedSlot = null;
+        resetSmsConfirmation();
+        hideFormMessage();
+        updateSummary();
+        loadSlots();
+    });
+
+    applyInitialState();
+    connectWebSocket();
+    loadSlots();
+</script>
+</body>
+</html>

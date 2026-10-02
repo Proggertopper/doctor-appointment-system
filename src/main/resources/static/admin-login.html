@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход врача</title>
+</head>
+<body>
+
+<h1>Вход врача</h1>
+
+<input type="password" id="password" placeholder="Пароль">
+<button onclick="login()">Войти</button>
+
+<script>
+    async function login() {
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('/api/admin/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+
+            if (error.message === 'Too many login attempts. Try again later.') {
+                alert('Забагато спроб входу. Спробуйте ще раз через 15 хвилин.');
+                return;
+            }
+
+            if (error.message === 'Invalid admin password') {
+                alert('Невірний пароль.');
+                return;
+            }
+
+            alert('Не вдалося увійти.');
+            return;
+        }
+
+        window.location.href = '/doctor.html';
+    }
+</script>
+
+</body>
+</html>

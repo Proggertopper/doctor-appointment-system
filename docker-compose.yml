@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17
+    container_name: gastrocare-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-med_schedule}
+      POSTGRES_USER: ${POSTGRES_USER:-myuser2}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hotelPassword}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-myuser2} -d ${POSTGRES_DB:-med_schedule}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: gastrocare-app
+    env_file:
+      - path: .env
+        required: false
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-med_schedule}
+      DATABASE_USERNAME: ${POSTGRES_USER:-myuser2}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-hotelPassword}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8080}
+      DOCTOR_ADMIN_COOKIE_SECURE: ${DOCTOR_ADMIN_COOKIE_SECURE:-false}
+      TURBOSMS_ENABLED: ${TURBOSMS_ENABLED:-false}
+      TURBOSMS_API_TOKEN: ${TURBOSMS_API_TOKEN:-PASTE_YOUR_CODE}
+      TURBOSMS_SMS_SENDER: ${TURBOSMS_SMS_SENDER:-YOUR_SMS_SENDER}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  postgres_data:
