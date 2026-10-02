@@ -68,7 +68,6 @@ public class TurboSmsProvider {
         if (result == null || result.response_code() == null || result.response_code() != 0) {
             throw new IllegalStateException("TurboSMS error: " + result);
         }
-
         log.info("TurboSMS SMS sent to {}", phone);
     }
 }
